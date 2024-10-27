@@ -1,0 +1,11 @@
+
+select {
+    color: white; 
+    background-color: transparent; 
+  }
+  
+  select option {
+    color: black;
+    background-color: white; 
+  }
+  
