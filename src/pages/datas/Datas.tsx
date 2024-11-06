@@ -66,6 +66,40 @@ export default function Datas() {
                 <span className="ml-2">CM</span>
               </div>
             </div>
+
+            <div className="relative w-full md:col-span-2">
+  <label className="block font-semibold text-base mb-2 text-center">
+    ¿CUENTAS CON ALGUNA PATOLOGÍA CARDÍACA? <br />(se te asignaran parametros mas reducidos)
+  </label>
+  <div className="flex justify-center items-center space-x-8 md:space-x-4">
+    <div className="flex items-center">
+      <input
+        type="radio"
+        id="patologia-si"
+        name="patologia"
+        value="sí"
+        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+      />
+      <label htmlFor="patologia-si" className="ml-2 text-base">
+        Sí
+      </label>
+    </div>
+    <div className="flex items-center">
+      <input
+        type="radio"
+        id="patologia-no"
+        name="patologia"
+        value="no"
+        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+      />
+      <label htmlFor="patologia-no" className="ml-2 text-base">
+        No
+      </label>
+    </div>
+  </div>
+</div>
+
+
           </div>
 
           <div className="text-center mt-8">

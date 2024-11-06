@@ -1,11 +1,14 @@
 import './Login.css';
 
+
 export default function Login() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#000000] via-[#1E3545] to-[#000000] bg-[length:200%] animate-gradient-x flex items-center justify-center">
       <div className="w-full max-w-lg bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-10 text-white shadow-md rounded-lg"> {/* Aumenté el padding */}
         <div className="flex justify-center mb-10">
-          <div className="w-24 h-24 bg-white rounded-full"></div>
+        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center">
+         <img  />
+        </div>
         </div>
         <h2 className="text-center text-2xl font-bold mb-8">ATHLETIC-BAND</h2>
 

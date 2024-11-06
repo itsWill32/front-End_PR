@@ -1,10 +1,21 @@
 import './Metrics.css';
 
-export default function Metrics() {
+interface MetricsProps {
+  time: number;
+}
+
+const formatTime = (time: number) => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
+  return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+};
+
+export default function Metrics({ time }: MetricsProps) {
   return (
     <div className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4 rounded-lg text-white mx-4 mt-6">
       <div className="text-center mb-4">
-        <h2 className="text-2xl font-bold">00:00:00</h2>
+        <h2 className="text-2xl font-bold">{formatTime(time)}</h2> {/* Muestra el tiempo formateado */}
         <p className="text-gray-400 text-sm">DURACIÓN</p>
       </div>
 
