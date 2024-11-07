@@ -1,18 +1,58 @@
 import './Login.css';
-
+import { useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Guardamos el token en localStorage o sessionStorage
+        localStorage.setItem('token', data.token);
+        setSuccess('Inicio de sesión exitoso');
+        setError(null);
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
+      } else {
+        setError('Credenciales inválidas');
+        setSuccess(null);
+      }
+    } catch (error) {
+      setError('Error al iniciar sesión');
+      setSuccess(null);
+      console.error(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#000000] via-[#1E3545] to-[#000000] bg-[length:200%] animate-gradient-x flex items-center justify-center">
-      <div className="w-full max-w-lg bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-10 text-white shadow-md rounded-lg"> {/* Aumenté el padding */}
+      <div className="w-full max-w-lg bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-10 text-white shadow-md rounded-lg">
         <div className="flex justify-center mb-10">
-        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center">
-         <img  />
-        </div>
+          <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center">
+            <img />
+          </div>
         </div>
         <h2 className="text-center text-2xl font-bold mb-8">ATHLETIC-BAND</h2>
 
-        <form className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-6">
             <div className="relative">
               <label htmlFor="email" className="block font-semibold text-base mb-2">
@@ -23,9 +63,9 @@ export default function Login() {
                 id="email"
                 name="email"
                 placeholder="Escribe tu correo"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 bg-transparent border-b-2 border-gray-500 focus:outline-none placeholder-gray-300 text-base transition-all duration-300 ease-in-out relative z-10"
-                onFocus={(e) => e.target.classList.add('animate-border-animate')}
-                onBlur={(e) => e.target.classList.remove('animate-border-animate')}
               />
             </div>
 
@@ -38,12 +78,24 @@ export default function Login() {
                 id="password"
                 name="password"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-transparent border-b-2 border-gray-500 focus:outline-none placeholder-gray-300 text-base transition-all duration-300 ease-in-out relative z-10"
-                onFocus={(e) => e.target.classList.add('animate-border-animate')}
-                onBlur={(e) => e.target.classList.remove('animate-border-animate')}
               />
             </div>
           </div>
+
+          {error && (
+            <p className="text-center text-red-400 bg-red-900 bg-opacity-30 p-2 rounded mt-4">
+              {error}
+            </p>
+          )}
+
+          {success && (
+            <p className="text-center text-green-400 bg-green-900 bg-opacity-30 p-2 rounded mt-4">
+              {success}
+            </p>
+          )}
 
           <div className="text-center mt-8">
             <button
@@ -52,12 +104,6 @@ export default function Login() {
             >
               INICIAR SESION
             </button>
-          </div>
-
-          <div className="text-center mt-6">
-            <p className="text-sm border-b-2 border-transparent hover:border-gray-300 inline-block pb-1 transition duration-300 ease-in-out">
-              NO CUENTAS CON ALGUNA CUENTA?
-            </p>
           </div>
         </form>
       </div>
