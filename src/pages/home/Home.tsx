@@ -1,28 +1,60 @@
 import { useState, useEffect } from 'react';
 import './Home.css';
+import mqtt from 'mqtt';
 import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
 import Metrics from '../../components/metrics/Metrics';
 import BodyTemperature from '../../components/bodyTemperature/BodyTemperature';
 import FrequencyCardiac from '../../components/frequencyCardiac/FrequencyCardiac';
 import MapComponent from '../../components/mapComponent/MapComponent';
 import CountdownModal from '../../components/countmodal/CountDownModal';
+
 export default function Home() {
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
+  const [temperature, setTemperature] = useState("--");
+  const [frequency, setFrequency] = useState("--");
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdown, setCountdown] = useState(10);
-  const [activeButton, setActiveButton] = useState<string>('actividad');
+  const [activeButton, setActiveButton] = useState('actividad');
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
+    const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+  
+    client.on('connect', () => {
+      console.log("Conectado a MQTT");
+      client.subscribe('testtopic/2', (err) => {
+        if (err) {
+          console.error("Error al suscribirse al tema:", err);
+        } else {
+          console.log("Suscripción exitosa al tema testtopic/2");
+        }
+      });
+    });
+  
+    client.on('message', (topic, message) => {
+      console.log("Mensaje recibido:", message.toString());
+      const data = JSON.parse(message.toString());
+      
+      // Redondeo a dos decimales
+      setTemperature(parseFloat(data["temperatura del corporal"]).toFixed(2));
+      setFrequency(parseFloat(data["temperantura ambiente"]).toFixed(2));
+    });
+  
+    return () => {
+      if (client) client.end();
+    };
+  }, []);
+  
+
+  // Temporizador de actividad
+  useEffect(() => {
+    let timer = null;
     if (isRunning) {
       timer = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+        setTime(prevTime => prevTime + 1);
       }, 1000);
     }
-    return () => {
-      if (timer) clearInterval(timer);
-    };
+    return () => timer && clearInterval(timer);
   }, [isRunning]);
 
   const handleButtonClick = () => {
@@ -30,26 +62,25 @@ export default function Home() {
       setIsRunning(false);
       setTime(0);
     } else {
-      setShowCountdown(true); // Muestra el modal de cuenta regresiva
-      setCountdown(10); // Reinicia la cuenta regresiva a 10
+      setShowCountdown(true);
+      setCountdown(10);
     }
   };
 
   const handleCountdownFinish = () => {
     setShowCountdown(false);
-    setIsRunning(true); // Inicia el temporizador principal
+    setIsRunning(true);
   };
 
   useEffect(() => {
-    let countdownTimer: NodeJS.Timeout;
+    let countdownTimer;
     if (showCountdown && countdown > 0) {
       countdownTimer = setInterval(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1);
+        setCountdown(prev => prev - 1);
       }, 1000);
     } else if (countdown === 0) {
       handleCountdownFinish();
     }
-
     return () => clearInterval(countdownTimer);
   }, [showCountdown, countdown]);
 
@@ -71,8 +102,8 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mt-6 mx-4">
-          <FrequencyCardiac frequency="--" />
-          <BodyTemperature temperature="--" />
+          <FrequencyCardiac frequency={frequency} />
+          <BodyTemperature temperature={temperature} />
           <MapComponent />
         </div>
 

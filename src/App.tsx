@@ -5,7 +5,7 @@ import Login from './pages/login/Login'
 import Welcome from './pages/welcome/Welcome'
 import Register from './pages/register/Register'
 import Home from './pages/home/Home'
-import Profile from './pages/profile/Profile'
+import Profile from './pages/profile/Profile'cd 
 import Estadistics from './pages/estadists/Estadistics'
 
 function App() {
