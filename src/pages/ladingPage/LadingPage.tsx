@@ -185,7 +185,7 @@ const LandingPage: React.FC = () => {
         </motion.div>
       </motion.section>
 
-       {/* Modal Component */}
+     
        <ChestMeasurementModal 
         isOpen={isModalOpen} 
         onClose={closeModal} 

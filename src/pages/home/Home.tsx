@@ -7,6 +7,8 @@ import BodyTemperature from '../../components/bodyTemperature/BodyTemperature';
 import FrequencyCardiac from '../../components/frequencyCardiac/FrequencyCardiac';
 import MapComponent from '../../components/mapComponent/MapComponent';
 import CountdownModal from '../../components/countmodal/CountDownModal';
+import logoAthleteBand from "../../assets/ATHLETEBANDLogo.png";
+import ConfirmEndModal from '../../components/ConfirmEndModal/ConfirmEndModal';
 
 export default function Home() {
   const [isRunning, setIsRunning] = useState(false);
@@ -16,6 +18,7 @@ export default function Home() {
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdown, setCountdown] = useState(10);
   const [activeButton, setActiveButton] = useState('actividad');
+  const [showConfirmEndModal, setShowConfirmEndModal] = useState(false);
 
   useEffect(() => {
     const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
@@ -34,8 +37,6 @@ export default function Home() {
     client.on('message', (topic, message) => {
       console.log("Mensaje recibido:", message.toString());
       const data = JSON.parse(message.toString());
-      
-      // Redondeo a dos decimales
       setTemperature(parseFloat(data["temperatura del corporal"]).toFixed(2));
       setFrequency(parseFloat(data["temperantura ambiente"]).toFixed(2));
     });
@@ -45,8 +46,6 @@ export default function Home() {
     };
   }, []);
   
-
-  // Temporizador de actividad
   useEffect(() => {
     let timer = null;
     if (isRunning) {
@@ -59,8 +58,7 @@ export default function Home() {
 
   const handleButtonClick = () => {
     if (isRunning) {
-      setIsRunning(false);
-      setTime(0);
+      setShowConfirmEndModal(true); // Mostramos el modal de confirmación
     } else {
       setShowCountdown(true);
       setCountdown(10);
@@ -70,6 +68,16 @@ export default function Home() {
   const handleCountdownFinish = () => {
     setShowCountdown(false);
     setIsRunning(true);
+  };
+
+  const handleConfirmEnd = () => {
+    setIsRunning(false);
+    setTime(0);
+    setShowConfirmEndModal(false);
+  };
+
+  const handleCancelEnd = () => {
+    setShowConfirmEndModal(false);
   };
 
   useEffect(() => {
@@ -87,14 +95,20 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-black">
       <header className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4 rounded-lg">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-white text-lg font-bold">ATLETH BAND</h1>
-            <p className="text-gray-400 text-sm">ACTIVIDAD</p>
-          </div>
-          <div className="w-10 h-10 bg-white rounded-full"></div>
-        </div>
-      </header>
+  <div className="flex justify-between items-center">
+    <div>
+      <h1 className="text-white text-lg font-bold">ATHLETIC BAND</h1>
+      <p className="text-gray-400 text-sm">ACTIVIDAD</p>
+    </div>
+    <div>
+      <img
+        src={logoAthleteBand}
+        alt="Athlete Band Logo"
+        className="w-10 h-10 rounded-full object-cover"
+      />
+    </div>
+  </div>
+</header>
 
       <main className="flex-grow bg-black">
         <div className="mx-4">
@@ -159,6 +173,15 @@ export default function Home() {
           onFinish={handleCountdownFinish}
         />
       )}
+
+       {/* Modal de confirmación para terminar */}
+       {showConfirmEndModal && (
+        <ConfirmEndModal
+          onConfirm={handleConfirmEnd}
+          onCancel={handleCancelEnd}
+        />
+      )}
+
     </div>
   );
 }
