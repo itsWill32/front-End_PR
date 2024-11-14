@@ -96,17 +96,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-black">
       <header className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4 rounded-lg">
-<<<<<<< HEAD
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-white text-lg font-bold">ATHLETE BAND</h1>
-            <p className="text-gray-400 text-sm">ACTIVIDAD</p>
-          </div>
-          <div className="w-10 h-10 bg-white rounded-full"></div>
-        </div>
-      </header>
-=======
-  <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center">
     <div>
       <h1 className="text-white text-lg font-bold">ATHLETIC BAND</h1>
       <p className="text-gray-400 text-sm">ACTIVIDAD</p>
@@ -120,7 +110,6 @@ export default function Home() {
     </div>
   </div>
 </header>
->>>>>>> a9ea36db260e3a9fa68d54a45e5660bea45eb360
 
       <main className="flex-grow bg-black">
         <div className="mx-4">

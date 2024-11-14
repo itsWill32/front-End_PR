@@ -4,11 +4,8 @@ import ProgressStats from '../../components/progressStats/ProgressStats';
 import GraficaCalorias from '../../components/graficaCalorias/GraficaCalorias';
 import GraficaDistancia from '../../components/graficaDistancia/GraficaDistancia';
 import GraficaTiempo from '../../components/graficaTiempo/GraficaTiempo';
-<<<<<<< HEAD
 import { Link } from 'react-router-dom';
-=======
 import logoAthleteBand from "../../assets/ATHLETEBANDLogo.png";
->>>>>>> a9ea36db260e3a9fa68d54a45e5660bea45eb360
 
 export default function Estadistics() {
 

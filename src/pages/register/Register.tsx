@@ -1,11 +1,7 @@
-<<<<<<< HEAD
-import './Register.css'; 
 import { Link } from 'react-router-dom';
-=======
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Register.css';
 import logoAthleteBand from "../../assets/ATHLETEBANDLogo.png";
->>>>>>> a9ea36db260e3a9fa68d54a45e5660bea45eb360
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
