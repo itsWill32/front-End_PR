@@ -4,7 +4,7 @@ export default function Datas() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#000000] via-[#1E3545] to-[#000000] bg-[length:200%] animate-gradient-x flex items-center justify-center">
       <div className="w-full max-w-lg bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-10 text-white shadow-md rounded-lg">
-        <h2 className="text-center text-2xl font-bold mb-8">INGRESA TUS DATOS</h2>
+        <h2 className="text-center text-2xl font-bold mb-8">INGRESA LOS SIGUIENTES DATOS</h2>
 
         <form className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 gap-4"> 
@@ -69,7 +69,7 @@ export default function Datas() {
 
             <div className="relative w-full md:col-span-2">
   <label className="block font-semibold text-base mb-2 text-center">
-    ¿CUENTAS CON ALGUNA PATOLOGÍA CARDÍACA? <br />(se te asignaran parametros mas reducidos)
+    ¿CUENTAS CON ALGUNA PATOLOGÍA CARDÍACA? <br />(se te asignaran parametros mas compactos)
   </label>
   <div className="flex justify-center items-center space-x-8 md:space-x-4">
     <div className="flex items-center">

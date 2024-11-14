@@ -4,7 +4,11 @@ import ProgressStats from '../../components/progressStats/ProgressStats';
 import GraficaCalorias from '../../components/graficaCalorias/GraficaCalorias';
 import GraficaDistancia from '../../components/graficaDistancia/GraficaDistancia';
 import GraficaTiempo from '../../components/graficaTiempo/GraficaTiempo';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
+=======
+import logoAthleteBand from "../../assets/ATHLETEBANDLogo.png";
+>>>>>>> a9ea36db260e3a9fa68d54a45e5660bea45eb360
 
 export default function Estadistics() {
 
@@ -21,14 +25,21 @@ export default function Estadistics() {
   return (
     <div className="flex flex-col min-h-screen bg-black">
       <header className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4 rounded-lg">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-white text-lg font-bold">ATLETH BAND</h1>
-            <p className="text-gray-400 text-sm">PERFIL</p>
-          </div>
-          <div className="w-10 h-10 bg-white rounded-full"></div>
-        </div>
-      </header>
+  <div className="flex justify-between items-center">
+    <div>
+      <h1 className="text-white text-lg font-bold">ATHLETIC BAND</h1>
+      <p className="text-gray-400 text-sm">ESTADÍSTICAS</p>
+    </div>
+
+    <div>
+      <img
+        src={logoAthleteBand}
+        alt="Athlete Band Logo"
+        className="w-10 h-10 rounded-full object-cover"
+      />
+    </div>
+  </div>
+</header>
 
       <main className="flex-grow bg-black mb-16">
      <ProgressStats></ProgressStats>
