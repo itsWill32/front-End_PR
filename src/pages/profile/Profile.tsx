@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './Profile.css';
 import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import ProfileInfo from '../../components/profileInfo/ProfileInfo';
 import RecentActivities from '../../components/recentActivities/RecentActivities';
 
@@ -47,8 +48,10 @@ export default function Profile() {
         activeButton === 'estadisticas' ? 'text-black bg-white' : 'text-white hover:bg-white hover:text-black'
       }`}
     >
-      <FaChartBar className="h-6 w-6 mb-1 md:hidden" /> 
-      <span className="text-xs">ESTADÍSTICAS</span>
+      <Link to={"/estadistics"}>
+        <FaChartBar className="h-6 w-6 mb-1 md:hidden" /> 
+        <span className="text-xs">ESTADÍSTICAS</span>
+      </Link>
     </button>
 
     <button
@@ -57,15 +60,19 @@ export default function Profile() {
         activeButton === 'actividad' ? 'text-black bg-white' : 'text-white hover:bg-white hover:text-black'
       }`}
     >
-      <FaHome className="h-6 w-6 mb-1 md:hidden" /> 
-      <span className="text-xs">ACTIVIDAD</span>
+      <Link to={"/home"}>
+        <FaHome className="h-6 w-6 mb-1 md:hidden" /> 
+        <span className="text-xs">ACTIVIDAD</span>
+      </Link>
     </button>
 
     <button
       className="w-1/3 flex flex-col items-center px-6 py-3 rounded-md transition duration-200 text-sm font-semibold bg-white text-black"
     >
-      <FaUser className="h-6 w-6 mb-1 md:hidden" /> 
-      <span className="text-xs">PERFIL</span>
+      <Link to={"/profile"}>
+        <FaUser className="h-6 w-6 mb-1 md:hidden" /> 
+        <span className="text-xs">PERFIL</span>
+      </Link>
     </button>
   </div>
 </footer>

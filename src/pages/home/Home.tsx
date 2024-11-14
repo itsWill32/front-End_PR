@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Home.css';
 import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
+import { Link, NavLink } from 'react-router-dom';
 import Metrics from '../../components/metrics/Metrics';
 import BodyTemperature from '../../components/bodyTemperature/BodyTemperature';
 import FrequencyCardiac from '../../components/frequencyCardiac/FrequencyCardiac';
@@ -58,7 +59,7 @@ export default function Home() {
       <header className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4 rounded-lg">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-white text-lg font-bold">ATLETH BAND</h1>
+            <h1 className="text-white text-lg font-bold">ATHLETE BAND</h1>
             <p className="text-gray-400 text-sm">ACTIVIDAD</p>
           </div>
           <div className="w-10 h-10 bg-white rounded-full"></div>
@@ -87,16 +88,22 @@ export default function Home() {
       </main>
 
       <footer className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4">
+
         <div className="flex justify-between md:justify-around items-center space-x-2 md:space-x-4">
+          
           <button
-            onClick={() => setActiveButton('estadisticas')}
+        
             className={`w-1/3 flex flex-col items-center px-6 py-3 rounded-md transition duration-200 text-sm font-semibold ${
               activeButton === 'estadisticas' ? 'text-black bg-white' : 'text-white hover:bg-white hover:text-black'
             }`}
+            onClick={() => setActiveButton('estadisticas')}
           >
-            <FaChartBar className="h-6 w-6 mb-1 md:hidden" /> 
-            <span className="text-xs">ESTADÍSTICAS</span>
+            <Link to="/estadistics" >
+              <FaChartBar className="h-6 w-6 mb-1 md:hidden" /> 
+              <span className="text-xs" >ESTADÍSTICAS</span>
+            </Link>
           </button>
+          
 
           <button
             onClick={() => setActiveButton('actividad')}
@@ -104,8 +111,10 @@ export default function Home() {
               activeButton === 'actividad' ? 'text-black bg-white' : 'text-white hover:bg-white hover:text-black'
             }`}
           >
-            <FaHome className="h-6 w-6 mb-1 md:hidden" /> 
-            <span className="text-xs">ACTIVIDAD</span>
+            <Link to={"/home"}>
+              <FaHome className="h-6 w-6 mb-1 md:hidden" /> 
+              <span className="text-xs">ACTIVIDAD</span>
+            </Link>
           </button>
 
           <button
@@ -114,8 +123,10 @@ export default function Home() {
               activeButton === 'perfil' ? 'text-black bg-white' : 'text-white hover:bg-white hover:text-black'
             }`}
           >
-            <FaUser className="h-6 w-6 mb-1 md:hidden" /> 
-            <span className="text-xs">PERFIL</span>
+            <Link to={"/profile"}>
+              <FaUser className="h-6 w-6 mb-1 md:hidden" /> 
+              <span className="text-xs">PERFIL</span>
+            </Link>
           </button>
         </div>
       </footer>

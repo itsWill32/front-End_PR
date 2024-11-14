@@ -4,6 +4,7 @@ import ProgressStats from '../../components/progressStats/ProgressStats';
 import GraficaCalorias from '../../components/graficaCalorias/GraficaCalorias';
 import GraficaDistancia from '../../components/graficaDistancia/GraficaDistancia';
 import GraficaTiempo from '../../components/graficaTiempo/GraficaTiempo';
+import { Link } from 'react-router-dom';
 
 export default function Estadistics() {
 
@@ -59,8 +60,10 @@ export default function Estadistics() {
     <button
       className="w-1/3 flex flex-col items-center px-6 py-3 rounded-md transition duration-200 text-sm font-semibold bg-white text-black"
     >
-      <FaChartBar className="h-6 w-6 mb-1 md:hidden" /> 
-      <span className="text-xs">ESTADÍSTICAS</span>
+      <Link to={"/estadistics"}>
+        <FaChartBar className="h-6 w-6 mb-1 md:hidden" /> 
+        <span className="text-xs">ESTADÍSTICAS</span>
+      </Link>
     </button>
 
     <button
@@ -69,8 +72,10 @@ export default function Estadistics() {
         activeButton === 'actividad' ? 'text-black bg-white' : 'text-white hover:bg-white hover:text-black'
       }`}
     >
-      <FaHome className="h-6 w-6 mb-1 md:hidden" /> 
-      <span className="text-xs">ACTIVIDAD</span>
+      <Link to={"/home"}>
+        <FaHome className="h-6 w-6 mb-1 md:hidden" /> 
+        <span className="text-xs">ACTIVIDAD</span>
+      </Link>
     </button>
 
     <button
@@ -79,8 +84,10 @@ export default function Estadistics() {
         activeButton === 'perfil' ? 'text-black bg-white' : 'text-white hover:bg-white hover:text-black'
       }`}
     >
-      <FaUser className="h-6 w-6 mb-1 md:hidden" /> 
-      <span className="text-xs">PERFIL</span>
+      <Link to={"/profile"}>
+        <FaUser className="h-6 w-6 mb-1 md:hidden" /> 
+        <span className="text-xs">PERFIL</span>
+      </Link>
     </button>
   </div>
 </footer>

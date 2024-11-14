@@ -1,4 +1,5 @@
 import './Register.css'; 
+import { Link } from 'react-router-dom';
 
 export default function Register() {
   return (
@@ -79,13 +80,18 @@ export default function Register() {
               type="submit"
               className="w-full px-4 py-2 border border-white rounded-md hover:bg-white hover:text-black transition duration-200 text-sm font-semibold"
             >
-              REGISTRARSE
+              <Link to={"/wel"}>
+                REGISTRARSE
+              </Link>
             </button>
           </div>
 
           <div className="text-center mt-5">
             <p className="text-sm border-b-2 border-transparent hover:border-gray-300 inline-block pb-1 transition duration-300 ease-in-out">
-              YA TIENES UNA CUENTA? INICIA SESIÓN
+              YA TIENES UNA CUENTA? 
+              <Link to={"/login"}>
+                INICIA SESIÓN
+              </Link>
             </p>
           </div>
         </form>

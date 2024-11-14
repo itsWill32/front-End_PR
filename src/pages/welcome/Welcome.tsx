@@ -1,4 +1,5 @@
 import './Welcome.css';
+import { Link } from 'react-router-dom';
 
 export default function Welcome() {
   return (
@@ -19,7 +20,10 @@ export default function Welcome() {
             type="button"
             className="px-10 py-3 border border-white rounded-md hover:bg-white hover:text-black transition duration-200 text-lg font-semibold"
           >
-            ACEPTAR
+            <Link to={"/profile"}>
+              ACEPTAR
+            </Link>
+            
           </button>
         </div>
       </div>

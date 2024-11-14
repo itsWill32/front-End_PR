@@ -1,6 +1,7 @@
 import './Login.css';
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState<string>('');
@@ -50,7 +51,7 @@ export default function Login() {
             <img />
           </div>
         </div>
-        <h2 className="text-center text-2xl font-bold mb-8">ATHLETIC-BAND</h2>
+        <h2 className="text-center text-2xl font-bold mb-8">ATHLET-BAND</h2>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-6">
@@ -102,7 +103,9 @@ export default function Login() {
               type="submit"
               className="w-full px-6 py-3 border border-white rounded-md hover:bg-white hover:text-black transition duration-200 text-base font-semibold"
             >
+             <Link to={"/home"}>
               INICIAR SESION
+             </Link>
             </button>
           </div>
         </form>
