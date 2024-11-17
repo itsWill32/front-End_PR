@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-//import { UserProvider } from './Components/context/UserContext'; Para proteger home
 import Datas from './pages/datas/Datas'
 import Login from './pages/login/Login'
 import Welcome from './pages/welcome/Welcome'
@@ -7,7 +6,7 @@ import Register from './pages/register/Register'
 import Home from './pages/home/Home'
 import Profile from './pages/profile/Profile'
 import Estadistics from './pages/estadists/Estadistics'
-import LandingPage from './pages/ladingPage/LadingPage'
+//import LandingPage from './pages/ladingPage/LadingPage'
 
 function App() {
 
@@ -15,7 +14,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-      <Route path="/wel" element={<Welcome />} />
+        {/*Quiero suponer que la landing será la pagina raíz, por eso la incluí en el router pero la dejo comentada*/}
+        {/*<Route path="/" element={<LandingPage/>} />*/}
+        <Route path="/wel" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
