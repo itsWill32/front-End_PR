@@ -6,23 +6,53 @@ import Register from './pages/register/Register';
 import Home from './pages/home/Home';
 import Profile from './pages/profile/Profile';
 import Estadistics from './pages/estadists/Estadistics';
-// import LandingPage from './pages/ladingPage/LadingPage';
+import LandingPage from './pages/ladingPage/LadingPage';
 import { UserProvider } from './context/UserContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          {/* Quiero suponer que la landing será la pagina raíz, por eso la incluí en el router pero la dejo comentada */}
-          {/* <Route path="/" element={<LandingPage/>} /> */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/wel" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/datas" element={<Datas />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/estadistics" element={<Estadistics />} />
+
+          {/* Rutas protegidas */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/datas"
+            element={
+              <ProtectedRoute>
+                <Datas />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/estadistics"
+            element={
+              <ProtectedRoute>
+                <Estadistics />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </UserProvider>

@@ -1,5 +1,5 @@
 import './Login.css';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/userHooks';
 
@@ -9,7 +9,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { setUser } = useUser(); // Usamos useUser para obtener setUser
+  const { setUser, isAuthenticated } = useUser();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -18,27 +18,23 @@ export default function Login() {
       const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password })
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        const userData = {
+        setUser({
           name: data.user.name,
           email: data.user.email,
-          token: data.token,
-          profilePicture: data.user.profilePicture || '',
-        };
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+          token: data.token || "",
+          profilePicture: data.user.profilePicture || undefined,
+        });
         setSuccess('Inicio de sesión exitoso');
         setError(null);
-        setTimeout(() => {
-          navigate('/home');
-        }, 1000);
       } else {
         setError(data.message || 'Credenciales inválidas');
         setSuccess(null);
@@ -46,9 +42,16 @@ export default function Login() {
     } catch (error) {
       setError('Error al iniciar sesión');
       setSuccess(null);
-      console.error(error);
+      console.error('Error:', error);
     }
   };
+
+  // Redirige a /home si el usuario ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/home', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#000000] via-[#1E3545] to-[#000000] bg-[length:200%] animate-gradient-x flex items-center justify-center">
