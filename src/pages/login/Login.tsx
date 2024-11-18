@@ -1,7 +1,7 @@
 import './Login.css';
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useUser } from '../../context/userHooks';
 
 export default function Login() {
   const [email, setEmail] = useState<string>('');
@@ -9,6 +9,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setUser } = useUser(); // Usamos useUser para obtener setUser
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -24,16 +25,22 @@ export default function Login() {
 
       const data = await response.json();
 
-      if (data.success) {
-        // Guardamos el token en localStorage o sessionStorage
-        localStorage.setItem('token', data.token);
+      if (response.ok) {
+        const userData = {
+          name: data.user.name,
+          email: data.user.email,
+          token: data.token,
+          profilePicture: data.user.profilePicture || '',
+        };
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
         setSuccess('Inicio de sesión exitoso');
         setError(null);
         setTimeout(() => {
           navigate('/home');
         }, 1000);
       } else {
-        setError('Credenciales inválidas');
+        setError(data.message || 'Credenciales inválidas');
         setSuccess(null);
       }
     } catch (error) {
@@ -103,9 +110,7 @@ export default function Login() {
               type="submit"
               className="w-full px-6 py-3 border border-white rounded-md hover:bg-white hover:text-black transition duration-200 text-base font-semibold"
             >
-             <Link to={"/home"}>
-              INICIAR SESION
-             </Link>
+              INICIAR SESIÓN
             </button>
           </div>
         </form>

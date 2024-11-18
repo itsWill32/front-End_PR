@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FaRunning } from 'react-icons/fa';
+import { useUser } from '../../context/userHooks';
 
 interface Activity {
   distance: string;
@@ -9,12 +10,15 @@ interface Activity {
 
 const RecentActivities = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
+  const { user } = useUser(); // Obtenemos el token del usuario
 
   useEffect(() => {
+    if (!user?.token) return;
+
     fetch('http://localhost:3000/activities', {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${document.cookie.split('token=')[1]}`, // Leer token desde cookies
+        Authorization: `Bearer ${user.token}`, // Usamos el token del contexto
       },
     })
       .then((response) => {
@@ -25,7 +29,7 @@ const RecentActivities = () => {
       })
       .then((data) => setActivities(data.activities))
       .catch((error) => console.error('Error al cargar actividades:', error));
-  }, []);
+  }, [user]);
 
   return (
     <div className="mx-4 mt-8">

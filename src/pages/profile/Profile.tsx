@@ -4,29 +4,16 @@ import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import ProfileInfo from '../../components/profileInfo/ProfileInfo';
 import RecentActivities from '../../components/recentActivities/RecentActivities';
+import { useUser } from '../../context/userHooks';
 
 export default function Profile() {
   const [activeButton, setActiveButton] = useState('');
   const navigate = useNavigate();
+  const { logout } = useUser();
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/logout', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${document.cookie.split('token=')[1]}`,
-        },
-      });
-
-      if (response.ok) {
-        document.cookie = 'token=; Max-Age=0; path=/;'; // Limpia el token
-        navigate('/login');
-      } else {
-        console.error('Error al cerrar sesión');
-      }
-    } catch (error) {
-      console.error('Error al intentar cerrar sesión:', error);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -93,7 +80,13 @@ export default function Profile() {
             </Link>
           </button>
 
-          <button className="w-1/3 flex flex-col items-center px-6 py-3 rounded-md transition duration-200 text-sm font-semibold bg-white text-black">
+          <button
+            className={`w-1/3 flex flex-col items-center px-6 py-3 rounded-md transition duration-200 text-sm font-semibold ${
+              activeButton === 'perfil'
+                ? 'text-black bg-white'
+                : 'text-white hover:bg-white hover:text-black'
+            }`}
+          >
             <Link to="/profile">
               <FaUser className="h-6 w-6 mb-1 md:hidden" />
               <span className="text-xs">PERFIL</span>
