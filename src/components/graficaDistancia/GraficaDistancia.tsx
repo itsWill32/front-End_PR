@@ -21,45 +21,49 @@ ChartJS.register(
   Legend
 );
 
-interface GraficaDistanciaProps {
-  mes: string;
-}
-
-const GraficaDistancia: FC<GraficaDistanciaProps> = ({ mes }) => {
+const GraficaDistancia: FC = () => {
   const data = {
-    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+    labels: ['15 Nov', '16 Nov', '17 Nov', '18 Nov', '19 Nov'],
     datasets: [
       {
         label: 'Distancia (km)',
-        data: [5, 7, 13, 25], 
+        data: [5, 6, 7, 8, 9],
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderWidth: 2,
+        tension: 0.4,
       },
     ],
   };
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, 
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
       },
       title: {
         display: true,
-        text: `Distancia Recorrida en ${mes}`,
+        text: `Distancia Recorrida del 15 al 19 de Noviembre`,
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Distancia (km)',
+        },
       },
     },
   };
 
   return (
-    <div className="bg-[#1E3545] p-6 rounded-lg shadow-lg" style={{ height: '400px', width: '100%' }}>
+    <div
+      className="bg-[#1E3545] p-6 rounded-lg shadow-lg"
+      style={{ height: '400px', width: '100%' }}
+    >
       <h2 className="text-white text-lg mb-4">Distancia Recorrida</h2>
       <div className="h-80 w-full">
         <Line data={data} options={options} />

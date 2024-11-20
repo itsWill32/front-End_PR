@@ -13,31 +13,27 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-interface TrainingClassificationProps {
-  mes: string;
-}
-
-const TrainingClassification: React.FC<TrainingClassificationProps> = ({ mes }) => {
+const TrainingClassification: React.FC = () => {
   const data = {
-    labels: ['0 min', '10 min', '20 min', '30 min', '40 min', '50 min', '60 min'], // Tiempo acumulado
+    labels: ['15 Nov', '16 Nov', '17 Nov', '18 Nov', '19 Nov'],
     datasets: [
       {
         label: 'Baja Intensidad',
-        data: [0, 1, 2, 3, 4, 5, 6], // Distancia recorrida
+        data: [5, 5.5, 6, 6.5, 7],
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         tension: 0.4,
       },
       {
         label: 'Media Intensidad',
-        data: [0, 2, 4, 6, 8, 10, 12], // Distancia recorrida
+        data: [7, 7.5, 8, 8.5, 9],
         borderColor: 'rgba(255, 205, 86, 1)',
         backgroundColor: 'rgba(255, 205, 86, 0.2)',
         tension: 0.4,
       },
       {
         label: 'Alta Intensidad',
-        data: [0, 3, 6, 9, 12, 15, 18], // Distancia recorrida
+        data: [9, 9.5, 10, 10.5, 11],
         borderColor: 'rgba(255, 99, 132, 1)',
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         tension: 0.4,
@@ -53,14 +49,14 @@ const TrainingClassification: React.FC<TrainingClassificationProps> = ({ mes }) 
       },
       title: {
         display: true,
-        text: `Relación Tiempo vs. Distancia en ${mes}`,
+        text: `Clasificación de Entrenamientos del 15 al 19 de Noviembre`,
       },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: 'Tiempo (min)',
+          text: 'Fecha',
         },
       },
       y: {
@@ -75,7 +71,7 @@ const TrainingClassification: React.FC<TrainingClassificationProps> = ({ mes }) 
 
   return (
     <div className="bg-[#1E3545] p-6 rounded-lg shadow-lg">
-      <h2 className="text-white text-lg mb-4">Relación Tiempo vs. Distancia</h2>
+      <h2 className="text-white text-lg mb-4">Clasificación de Entrenamientos</h2>
       <Line data={data} options={options} />
     </div>
   );

@@ -21,31 +21,27 @@ ChartJS.register(
   Legend
 );
 
-interface TrendsChartProps {
-  mes: string;
-}
-
-const TrendsChart: React.FC<TrendsChartProps> = ({ mes }) => {
+const TrendsChart: React.FC = () => {
   const data = {
-    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+    labels: ['15 Nov', '16 Nov', '17 Nov', '18 Nov', '19 Nov'],
     datasets: [
       {
         label: 'Tiempo (min)',
-        data: [30, 45, 60, 50],
+        data: [30, 35, 40, 45, 50],
         borderColor: 'rgba(153, 102, 255, 1)',
         backgroundColor: 'rgba(153, 102, 255, 0.2)',
         tension: 0.4,
       },
       {
         label: 'Distancia (km)',
-        data: [5, 7, 13, 25],
+        data: [5, 6, 7, 8, 9],
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         tension: 0.4,
       },
       {
         label: 'Calorías (kcal)',
-        data: [300, 400, 500, 450],
+        data: [300, 320, 340, 360, 380],
         borderColor: 'rgba(255, 159, 64, 1)',
         backgroundColor: 'rgba(255, 159, 64, 0.2)',
         tension: 0.4,
@@ -61,12 +57,22 @@ const TrendsChart: React.FC<TrendsChartProps> = ({ mes }) => {
       },
       title: {
         display: true,
-        text: `Tendencias de Entrenamiento en ${mes}`,
+        text: `Tendencias de Entrenamiento del 15 al 19 de Noviembre`,
       },
     },
     scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Fecha',
+        },
+      },
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Valores',
+        },
       },
     },
   };

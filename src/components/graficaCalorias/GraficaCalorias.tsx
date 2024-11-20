@@ -21,45 +21,49 @@ ChartJS.register(
   Legend
 );
 
-interface GraficaCaloriasProps {
-  mes: string;
-}
-
-const GraficaCalorias: FC<GraficaCaloriasProps> = ({ mes }) => {
+const GraficaCalorias: FC = () => {
   const data = {
-    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+    labels: ['15 Nov', '16 Nov', '17 Nov', '18 Nov', '19 Nov'],
     datasets: [
       {
         label: 'Calorías (kcal)',
-        data: [300, 400, 500, 450], 
+        data: [300, 320, 340, 360, 380],
         borderColor: 'rgba(255, 159, 64, 1)',
         backgroundColor: 'rgba(255, 159, 64, 0.2)',
         borderWidth: 2,
+        tension: 0.4,
       },
     ],
   };
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, 
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
       },
       title: {
         display: true,
-        text: `Calorías Quemadas en ${mes}`,
+        text: `Calorías Quemadas del 15 al 19 de Noviembre`,
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Calorías (kcal)',
+        },
       },
     },
   };
 
   return (
-    <div className="bg-[#1E3545] p-6 rounded-lg shadow-lg" style={{ height: '400px', width: '100%' }}>
+    <div
+      className="bg-[#1E3545] p-6 rounded-lg shadow-lg"
+      style={{ height: '400px', width: '100%' }}
+    >
       <h2 className="text-white text-lg mb-4">Calorías Quemadas</h2>
       <div className="h-80 w-full">
         <Line data={data} options={options} />
