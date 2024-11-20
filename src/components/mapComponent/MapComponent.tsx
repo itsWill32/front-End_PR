@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Map, { Marker } from 'react-map-gl';
 
 interface Coordinates {
@@ -6,30 +6,14 @@ interface Coordinates {
   longitude: number;
 }
 
-const MapComponent: React.FC = () => {
-  const [location, setLocation] = useState<Coordinates | null>(null);
+interface MapComponentProps {
+  location: Coordinates;
+}
 
-  useEffect(() => {
-    // Obtener la ubicación actual del usuario y actualizarla en tiempo real
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      },
-      (error) => {
-        console.error("Error obteniendo la ubicación: ", error);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-
-    return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
-
+const MapComponent: React.FC<MapComponentProps> = ({ location }) => {
   return (
     <div id="map" className="w-full h-64 bg-gray-800 rounded-lg overflow-hidden">
-      {location ? (
+      {location.latitude !== 0 && location.longitude !== 0 ? (
         <Map
           initialViewState={{
             latitude: location.latitude,
@@ -38,12 +22,11 @@ const MapComponent: React.FC = () => {
           }}
           style={{ width: '100%', height: '100%' }}
           mapStyle="mapbox://styles/mapbox/streets-v11"
-          mapboxAccessToken="TU_MAPBOX_ACCESS_TOKEN" // Reemplaza con tu token
+          mapboxAccessToken="TU_MAPBOX_ACCESS_TOKEN"
         >
           <Marker
             latitude={location.latitude}
             longitude={location.longitude}
-            offset={[0, -10]} // Centrar el marcador
           >
             <div className="bg-blue-500 h-4 w-4 rounded-full border-2 border-white"></div>
           </Marker>

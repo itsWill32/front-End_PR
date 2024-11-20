@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { connectWebSocket } from '../../websocket';
 
-interface BodyTemperatureProps {
-  initialTemperature?: number | string;
-}
-
-const BodyTemperature: React.FC<BodyTemperatureProps> = ({ initialTemperature = '--' }) => {
-  const [temperature, setTemperature] = useState<number | string>(initialTemperature);
+const BodyTemperature: React.FC = () => {
+  const [temperature, setTemperature] = useState<number | string>("--");
 
   useEffect(() => {
-    // Conexión WebSocket
-    const ws = new WebSocket('ws://localhost:3000');
+    const ws = connectWebSocket();
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.temperature) {
-        setTemperature(data.temperature);
+    const handleMessage = (event: MessageEvent) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'temperatura') {
+        setTemperature(parseFloat(message.data).toFixed(2));
       }
     };
 
-    return () => ws.close();
+    ws.addEventListener('message', handleMessage);
+
+    return () => {
+      ws.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   return (

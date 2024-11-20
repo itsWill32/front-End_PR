@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import './Home.css';
-import mqtt from 'mqtt';
 import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Metrics from '../../components/metrics/Metrics';
@@ -9,41 +8,41 @@ import FrequencyCardiac from '../../components/frequencyCardiac/FrequencyCardiac
 import MapComponent from '../../components/mapComponent/MapComponent';
 import CountdownModal from '../../components/countmodal/CountDownModal';
 import ConfirmEndModal from '../../components/ConfirmEndModal/ConfirmEndModal';
+import { connectWebSocket } from '../../websocket';
+
+interface Location {
+  latitude: number;
+  longitude: number;
+}
 
 export default function Home() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [time, setTime] = useState(0);
-  const [temperature, setTemperature] = useState<string | number>("--");
-  const [frequency, setFrequency] = useState<string | number>("--");
-  const [showCountdown, setShowCountdown] = useState(false);
-  const [countdown, setCountdown] = useState(10);
-  const [activeButton, setActiveButton] = useState('actividad');
-  const [showConfirmEndModal, setShowConfirmEndModal] = useState(false);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [time, setTime] = useState<number>(0);
+  const [location, setLocation] = useState<Location>({ latitude: 0, longitude: 0 });
+  const [showCountdown, setShowCountdown] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(10);
+  const [activeButton, setActiveButton] = useState<string>('actividad');
+  const [showConfirmEndModal, setShowConfirmEndModal] = useState<boolean>(false);
 
   useEffect(() => {
-    const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
-    const topic = 'testtopic/2';
+    const ws = connectWebSocket();
 
-    client.on('connect', () => {
-      console.log("Conectado a MQTT");
-      client.subscribe(topic, (err) => {
-        if (err) {
-          console.error("Error al suscribirse al tema:", err);
-        } else {
-          console.log(`Suscripción exitosa al tema ${topic}`);
-        }
-      });
-    });
+    const handleMessage = (event: MessageEvent) => {
+      const message = JSON.parse(event.data);
+      console.log("Mensaje recibido desde el backend:", message);
 
-    client.on('message', (_, message) => {
-      console.log("Mensaje recibido:", message.toString());
-      const data = JSON.parse(message.toString());
-      setTemperature(parseFloat(data["temperatura del corporal"]).toFixed(2));
-      setFrequency(parseFloat(data["temperantura ambiente"]).toFixed(2));
-    });
+      if (message.type === 'gps' && message.data.latitud && message.data.longitud) {
+        setLocation({
+          latitude: message.data.latitud,
+          longitude: message.data.longitud,
+        });
+      }
+    };
+
+    ws.addEventListener('message', handleMessage);
 
     return () => {
-      client.end();
+      ws.removeEventListener('message', handleMessage);
     };
   }, []);
 
@@ -117,9 +116,9 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mt-6 mx-4">
-          <FrequencyCardiac frequency={frequency} />
-          <BodyTemperature initialTemperature={temperature} />
-          <MapComponent />
+          <FrequencyCardiac />
+          <BodyTemperature />
+          <MapComponent location={location} />
         </div>
 
         <div className="flex justify-center mt-6 lg:mt-4 mx-4">
