@@ -8,7 +8,6 @@ import FrequencyCardiac from '../../components/frequencyCardiac/FrequencyCardiac
 import MapComponent from '../../components/mapComponent/MapComponent';
 import CountdownModal from '../../components/countmodal/CountDownModal';
 import ConfirmEndModal from '../../components/ConfirmEndModal/ConfirmEndModal';
-import { connectWebSocket } from '../../websocket';
 
 interface Location {
   latitude: number;
@@ -24,28 +23,26 @@ export default function Home() {
   const [activeButton, setActiveButton] = useState<string>('actividad');
   const [showConfirmEndModal, setShowConfirmEndModal] = useState<boolean>(false);
 
+  // Obtener la ubicación del navegador
   useEffect(() => {
-    const ws = connectWebSocket();
-
-    const handleMessage = (event: MessageEvent) => {
-      const message = JSON.parse(event.data);
-      console.log("Mensaje recibido desde el backend:", message);
-
-      if (message.type === 'gps' && message.data.latitud && message.data.longitud) {
-        setLocation({
-          latitude: message.data.latitud,
-          longitude: message.data.longitud,
-        });
-      }
-    };
-
-    ws.addEventListener('message', handleMessage);
-
-    return () => {
-      ws.removeEventListener('message', handleMessage);
-    };
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Error al obtener la ubicación:', error);
+        }
+      );
+    } else {
+      console.error('La geolocalización no es compatible con este navegador.');
+    }
   }, []);
 
+  // Temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isRunning) {
@@ -58,6 +55,7 @@ export default function Home() {
     };
   }, [isRunning]);
 
+  // Manejo del botón Iniciar/Terminar
   const handleButtonClick = () => {
     if (isRunning) {
       setShowConfirmEndModal(true);
@@ -82,6 +80,7 @@ export default function Home() {
     setShowConfirmEndModal(false);
   };
 
+  // Cuenta regresiva
   useEffect(() => {
     if (showCountdown) {
       const countdownTimer = setInterval(() => {
@@ -101,6 +100,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
+      {/* Encabezado */}
       <header className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4 rounded-lg">
         <div className="flex justify-between items-center">
           <div>
@@ -110,6 +110,7 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Contenido Principal */}
       <main className="flex-grow bg-black">
         <div className="mx-4">
           <Metrics time={time} />
@@ -126,11 +127,12 @@ export default function Home() {
             onClick={handleButtonClick}
             className="px-6 py-3 bg-white text-black font-semibold rounded-md w-full max-w-xs md:w-auto text-center"
           >
-            {isRunning ? "Terminar" : "Iniciar"}
+            {isRunning ? 'Terminar' : 'Iniciar'}
           </button>
         </div>
       </main>
 
+      {/* Pie de Página */}
       <footer className="bg-gradient-to-br from-[#131922] via-[#1E3545] to-[#1A2A37] p-4">
         <div className="flex justify-between items-center space-x-4">
           <button
@@ -169,6 +171,7 @@ export default function Home() {
         </div>
       </footer>
 
+      {/* Modales */}
       {showCountdown && (
         <CountdownModal
           countdown={countdown}
@@ -177,10 +180,7 @@ export default function Home() {
         />
       )}
       {showConfirmEndModal && (
-        <ConfirmEndModal
-          onConfirm={handleConfirmEnd}
-          onCancel={handleCancelEnd}
-        />
+        <ConfirmEndModal onConfirm={handleConfirmEnd} onCancel={handleCancelEnd} />
       )}
     </div>
   );
