@@ -1,3 +1,5 @@
+// src/pages/estadistics/Estadistics.tsx
+
 import { useState } from 'react';
 import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
 import ProgressStats from '../../components/progressStats/ProgressStats';
@@ -6,6 +8,7 @@ import GraficaDistancia from '../../components/graficaDistancia/GraficaDistancia
 import GraficaTiempo from '../../components/graficaTiempo/GraficaTiempo';
 import TrendsChart from '../../components/TrendsChart';
 import TrainingClassification from '../../components/TrainingClassification';
+import GraficaRitmoCardiaco from '../../components/GraficaRitmoCardiaco';
 import { Link } from 'react-router-dom';
 import logoAthleteBand from "../../assets/ATHLETEBANDLogo.png";
 
@@ -41,6 +44,7 @@ export default function Estadistics() {
           <GraficaDistancia />
           <GraficaTiempo />
           <GraficaCalorias />
+          <GraficaRitmoCardiaco /> {/* Añadir la nueva gráfica aquí */}
           <TrendsChart />
           <TrainingClassification />
         </div>
