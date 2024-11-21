@@ -5,7 +5,7 @@ export const initializeUser = async (): Promise<{
   isAuthenticated: boolean;
 }> => {
   try {
-    const response = await fetch('http://localhost:3000/profile', {
+    const response = await fetch('http://44.197.80.108:3000/profile', {
       method: 'GET',
       credentials: 'include',
     });

@@ -15,7 +15,7 @@ const RecentActivities = () => {
   useEffect(() => {
     if (!user?.token) return;
 
-    fetch('http://localhost:3000/activities', {
+    fetch('http://44.197.80.108:3000/activities', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${user.token}`, // Usamos el token del contexto
