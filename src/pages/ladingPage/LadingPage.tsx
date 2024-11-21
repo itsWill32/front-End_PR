@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import logoRunBlue from "../../assets/2579814.jpg";
 import logoRunWhite from "../../assets/1259.jpg";
 import logoAppRun from "../../assets/isometrica-corriendo-infografia-aplicacion-movil 1.png";
@@ -12,7 +13,7 @@ const LandingPage: React.FC = () => {
     const section1Ref = useRef(null);
     const section2Ref = useRef(null);
     const section3Ref = useRef(null);
-  
+    const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
   
     const heroInView = useInView(heroRef, { margin: '-50px' });
@@ -22,9 +23,15 @@ const LandingPage: React.FC = () => {
   
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
+    
     const handleConfirm = (chestSize: string) => {
+      if (!chestSize) {
+          alert('Por favor, ingresa una medida válida.');
+          return;
+      }
       alert(`Medida de pecho ingresada: ${chestSize} cm`);
       closeModal();
+      navigate('/register'); // Redirige a la página de registro
   };
 
   const scrollToSection3 = () => {
