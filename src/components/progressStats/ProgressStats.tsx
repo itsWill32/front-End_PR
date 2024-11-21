@@ -5,21 +5,21 @@ export default function ProgressStats() {
   
   <div className="grid grid-rows-2 gap-2 w-full text-center">
     <div className="row-span-1">
-      <p className="text-white text-2xl font-semibold">0.00</p>
+      <p className="text-white text-2xl font-semibold">35.00</p>
       <p className="text-gray-400 text-xs">KM TOTALES</p>
     </div>
 
     <div className="grid grid-cols-3 gap-2">
       <div>
-        <p className="text-white text-lg font-semibold">0.0</p>
+        <p className="text-white text-lg font-semibold">3.33</p>
         <p className="text-gray-400 text-xs">HORAS TOTALES</p>
       </div>
       <div>
-        <p className="text-white text-lg font-semibold">0.0</p>
+        <p className="text-white text-lg font-semibold">1700</p>
         <p className="text-gray-400 text-xs">KCAL TOTALES</p>
       </div>
       <div>
-        <p className="text-white text-lg font-semibold">0.0</p>
+        <p className="text-white text-lg font-semibold">85.6</p>
         <p className="text-gray-400 text-xs">RITMO PROMEDIO</p>
       </div>
     </div>
