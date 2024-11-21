@@ -1,0 +1,21 @@
+{
+  "name": "Athlete Band",
+  "short_name": "Athlete Band",
+  "description": "Aplicación PWA de Athlete Band",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1E3545",
+  "theme_color": "#1E3545",
+  "icons": [
+    {
+      "src": "/assets/ATHLETEBANDLogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/ATHLETEBANDLogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
