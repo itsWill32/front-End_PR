@@ -24,7 +24,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch('http://44.197.80.108:3000/register', {
+      const response = await fetch('https://athlete-band-api.integrador.xyz/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

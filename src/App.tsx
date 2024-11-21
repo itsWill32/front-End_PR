@@ -20,9 +20,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/datas" element={<Datas />} />
-         <Route path="/home" element={<Home />} /> 
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/estadistics" element={<Estadistics />}  />
+         {/* <Route path="/home" element={<Home />} /> */}
+        {/*<Route path="/profile" element={<Profile />} /> */}
+        {/* <Route path="/estadistics" element={<Estadistics />}  /> */}
 
         Rutas protegidas  
         <Route
