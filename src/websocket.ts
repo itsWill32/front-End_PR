@@ -3,11 +3,18 @@ let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 10; // Número máximo de intentos de reconexión
 const RECONNECT_INTERVAL = 5000; // Tiempo en milisegundos entre intentos de reconexión
 
+const getWebSocketURL = (): string => {
+  const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+  const host = 'athlete-band-api.integrador.xyz'; // Dominio del backend
+  return `${protocol}${host}`;
+};
+
 export const connectWebSocket = (): WebSocket => {
   if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
     console.log("Intentando conectar al WebSocket...");
 
-    ws = new WebSocket('wss://athlete-band-api.integrador.xyz');
+    const wsURL = getWebSocketURL(); // Determinar la URL según el protocolo
+    ws = new WebSocket(wsURL);
 
     ws.onopen = () => {
       console.log("Conexión WebSocket establecida con el backend.");
