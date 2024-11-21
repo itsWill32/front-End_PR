@@ -7,7 +7,7 @@ export const connectWebSocket = (): WebSocket => {
   if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
     console.log("Intentando conectar al WebSocket...");
 
-    ws = new WebSocket('ws://athlete-band-api.integrador.xyz');
+    ws = new WebSocket('wss://athlete-band-api.integrador.xyz');
 
     ws.onopen = () => {
       console.log("Conexión WebSocket establecida con el backend.");
