@@ -1,5 +1,3 @@
-// src/pages/estadistics/Estadistics.tsx
-
 import { useState } from 'react';
 import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
 import ProgressStats from '../../components/progressStats/ProgressStats';
