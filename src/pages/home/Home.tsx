@@ -8,6 +8,7 @@ import FrequencyCardiac from '../../components/frequencyCardiac/FrequencyCardiac
 import MapComponent from '../../components/mapComponent/MapComponent';
 import CountdownModal from '../../components/countmodal/CountDownModal';
 import ConfirmEndModal from '../../components/ConfirmEndModal/ConfirmEndModal';
+import { connectWebSocket } from '../../websocket';
 
 interface Location {
   latitude: number;
@@ -22,6 +23,7 @@ export default function Home() {
   const [countdown, setCountdown] = useState<number>(10);
   const [activeButton, setActiveButton] = useState<string>('actividad');
   const [showConfirmEndModal, setShowConfirmEndModal] = useState<boolean>(false);
+  const [isEncorvado, setIsEncorvado] = useState<boolean>(false); // Nuevo estado
 
   // Obtener la ubicación del navegador
   useEffect(() => {
@@ -40,6 +42,36 @@ export default function Home() {
     } else {
       console.error('La geolocalización no es compatible con este navegador.');
     }
+  }, []);
+
+  // Configurar la conexión WebSocket
+  useEffect(() => {
+    const ws = connectWebSocket();
+
+    const handleMessage = (event: MessageEvent) => {
+      const message = JSON.parse(event.data);
+      console.log("Mensaje recibido desde el backend:", message);
+
+      if (message.type === 'gps' && message.data.latitud && message.data.longitud) {
+        setLocation({
+          latitude: message.data.latitud,
+          longitude: message.data.longitud,
+        });
+      } else if (message.type === 'postura') {
+        if (message.data === 'encorvado') {
+          setIsEncorvado(true);
+        } else if (message.data === 'correcta') {
+          setIsEncorvado(false);
+        }
+      }
+    };
+
+    ws.addEventListener('message', handleMessage);
+
+    return () => {
+      ws.removeEventListener('message', handleMessage);
+      ws.close();
+    };
   }, []);
 
   // Temporizador
@@ -115,6 +147,13 @@ export default function Home() {
         <div className="mx-4">
           <Metrics time={time} />
         </div>
+
+        {/* Mostrar alerta si el usuario está encorvado */}
+        {isEncorvado && (
+          <div className="mx-4 mt-4 p-4 bg-red-600 text-white rounded-md">
+            <p>¡Mejora tu postura!</p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mt-6 mx-4">
           <FrequencyCardiac />
