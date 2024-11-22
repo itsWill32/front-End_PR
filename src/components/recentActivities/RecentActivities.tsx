@@ -18,9 +18,9 @@ const RecentActivities = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
+        //https://athlete-band-api.integrador.xyz/activities
         const response = await fetch('https://athlete-band-api.integrador.xyz/activities', {
           method: 'GET',
-          credentials: 'include', // Incluye cookies para autenticación
         });
 
         if (!response.ok) {

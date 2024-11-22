@@ -6,6 +6,7 @@ const RECONNECT_INTERVAL = 5000; // Tiempo en milisegundos entre intentos de rec
 const getWebSocketURL = (): string => {
   const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
   const host = 'athlete-band-api.integrador.xyz'; // Dominio del backend
+  //const host = 'localhost:3000'; // Dominio del backend
   return `${protocol}${host}`;
 };
 

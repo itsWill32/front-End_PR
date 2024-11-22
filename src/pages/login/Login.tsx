@@ -16,6 +16,7 @@ export default function Login() {
 
     try {
       const response = await fetch('https://athlete-band-api.integrador.xyz/login', {
+      //const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

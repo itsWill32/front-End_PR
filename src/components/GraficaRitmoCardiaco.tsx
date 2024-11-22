@@ -27,8 +27,8 @@ ChartJS.register(
 const GraficaRitmoCardiaco: FC = () => {
   const heartRateData = [
     { date: '2023-11-15', bpm: 85 },
-    { date: '2023-11-16', bpm: 76 },
-    { date: '2023-11-17', bpm: 81 },
+    { date: '2023-11-16', bpm: 81 },
+    { date: '2023-11-17', bpm: 85 },
     { date: '2023-11-18', bpm: 95 },
     { date: '2023-11-19', bpm: 91 },
   ];
