@@ -23,26 +23,7 @@ export default function Home() {
   const [countdown, setCountdown] = useState<number>(10);
   const [activeButton, setActiveButton] = useState<string>('actividad');
   const [showConfirmEndModal, setShowConfirmEndModal] = useState<boolean>(false);
-  const [isEncorvado, setIsEncorvado] = useState<boolean>(false); // Nuevo estado
-
-  // Obtener la ubicación del navegador
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error('Error al obtener la ubicación:', error);
-        }
-      );
-    } else {
-      console.error('La geolocalización no es compatible con este navegador.');
-    }
-  }, []);
+  const [isEncorvado, setIsEncorvado] = useState<boolean>(false);
 
   // Configurar la conexión WebSocket
   useEffect(() => {
@@ -54,8 +35,8 @@ export default function Home() {
 
       if (message.type === 'gps' && message.data.latitud && message.data.longitud) {
         setLocation({
-          latitude: message.data.latitud,
-          longitude: message.data.longitud,
+          latitude: parseFloat(message.data.latitud),
+          longitude: parseFloat(message.data.longitud),
         });
       } else if (message.type === 'postura') {
         if (message.data === 'encorvado') {

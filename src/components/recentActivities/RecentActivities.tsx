@@ -20,6 +20,7 @@ const RecentActivities = () => {
       try {
         //https://athlete-band-api.integrador.xyz/activities
         const response = await fetch('https://athlete-band-api.integrador.xyz/activities', {
+        //const response = await fetch('http://localhost:3000/activities', {
           method: 'GET',
         });
 

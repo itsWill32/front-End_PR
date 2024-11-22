@@ -21,10 +21,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/datas" element={<Datas />} />
          {/* <Route path="/home" element={<Home />} /> */}
-        {/*<Route path="/profile" element={<Profile />} /> */}
+        {/* <Route path="/profile" element={<Profile />} /> */} 
         {/* <Route path="/estadistics" element={<Estadistics />}  /> */}
 
-        Rutas protegidas  
+        {/* Rutas protegidas */}
         <Route
           path="/home"
           element={
