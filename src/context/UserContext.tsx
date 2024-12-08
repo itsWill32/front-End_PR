@@ -39,8 +39,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      const response = await fetch('https://athlete-band-api.integrador.xyz/logout', {
-      //const response = await fetch('http://localhost:3000/logout', {
+      //const response = await fetch('https://athlete-band-api.integrador.xyz/logout', {
+      const response = await fetch('http://localhost:3000/logout', {
         method: 'POST',
         credentials: 'include',
       });

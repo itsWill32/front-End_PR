@@ -5,8 +5,8 @@ const RECONNECT_INTERVAL = 5000;
 
 const getWebSocketURL = (): string => {
   const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-  const host = 'athlete-band-api.integrador.xyz';
-  //const host = 'localhost:3000';
+  //const host = 'athlete-band-api.integrador.xyz';
+  const host = 'localhost:3000';
   return `${protocol}${host}`;
 };
 

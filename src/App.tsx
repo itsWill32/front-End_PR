@@ -8,7 +8,7 @@ import Profile from './pages/profile/Profile';
 import Estadistics from './pages/estadists/Estadistics';
 import LandingPage from './pages/ladingPage/LadingPage';
 import { UserProvider } from './context/UserContext';
-import ProtectedRoute from './components/ProtectedRoute';
+//import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -20,11 +20,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/datas" element={<Datas />} />
-         {/* <Route path="/home" element={<Home />} /> */}
-        {/* <Route path="/profile" element={<Profile />} /> */} 
-        {/* <Route path="/estadistics" element={<Estadistics />}  /> */}
+         <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/estadistics" element={<Estadistics />}  />
 
-        {/* Rutas protegidas */}
+        {/* Rutas protegidas
         <Route
           path="/home"
           element={
@@ -56,7 +56,7 @@ function App() {
               <Estadistics />
             </ProtectedRoute>
           }
-        />
+        />*/}
       </Routes>
     </BrowserRouter>
   </UserProvider>
