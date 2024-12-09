@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -17,12 +18,12 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
 );
 
-// Interfaces
 interface Stats {
   mean: number;
   median: number | string;
@@ -42,19 +43,17 @@ interface BinomialDataPoint {
   prob: number;
 }
 
-// Funciones Auxiliares (mover fuera del componente)
-const factorial = (x: number): number => {
-  if (x <= 1) return 1;
-  let f = 1;
-  for (let i = 2; i <= x; i++) f *= i;
-  return f;
-};
+function combination(n: number, k: number): number {
+  if (k < 0 || k > n) return 0;
+  if (k === 0 || k === n) return 1;
+  let result = 1;
+  for (let i = 1; i <= k; i++) {
+    result = (result * (n - i + 1)) / i;
+  }
+  return result;
+}
 
-const combination = (n: number, k: number): number => {
-  return factorial(n) / (factorial(k) * factorial(n - k));
-};
-
-const calcStats = (values: number[]): Stats | null => {
+function calcStats(values: number[]): Stats | null {
   if (values.length === 0) return null;
   const sorted = [...values].sort((a, b) => a - b);
   const n = sorted.length;
@@ -87,68 +86,43 @@ const calcStats = (values: number[]): Stats | null => {
   const max = sorted[n - 1];
 
   return { mean, median, mode, std, min, max };
-};
+}
 
-const calcBinomial = (values: number[], threshold: number): { n: number; p: number; distribution: BinomialDataPoint[] } => {
+function calcBinomial(values: number[], threshold: number): { n: number; p: number; distribution: BinomialDataPoint[] } {
   const n = values.length;
-  if (n === 0) return { n: 0, p: 0, distribution: [] };
+  if (n === 0) {
+    console.log('calcBinomial: no hay datos (n=0), no se puede calcular binomial');
+    return { n: 0, p: 0, distribution: [] };
+  }
+
   const successes = values.filter((t) => t > threshold).length;
   const p = successes / n;
-  const distribution: BinomialDataPoint[] = [];
 
-  // Limitar la cantidad de puntos para el gráfico
-  const maxPoints = 100; // Número máximo de puntos a graficar
-  const step = Math.floor(n / maxPoints) || 1; // Evitar step=0
-  for (let k = 0; k <= n; k += step) {
+  console.log(`calcBinomial: n=${n}, éxitos=${successes}, p=${p}, umbral=${threshold}`);
+
+  const distribution: BinomialDataPoint[] = [];
+  for (let k = 0; k <= n; k++) {
     const prob = combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
     distribution.push({ k, prob });
   }
-  // Asegurar que el último punto se incluya
-  if (n % step !== 0) {
-    const prob = combination(n, n) * Math.pow(p, n) * Math.pow(1 - p, 0);
-    distribution.push({ k: n, prob });
-  }
 
+  console.log('calcBinomial: distribution calculada', distribution);
   return { n, p, distribution };
-};
+}
 
 const GraficaTemperatura: React.FC = () => {
-  const [days, setDays] = useState(1);
+  const [days, setDays] = useState<number>(1);
   const [historyData, setHistoryData] = useState<DataPoint[]>([]);
   const [startDate, setStartDate] = useState('2023-11-15');
-  const [endDate, setEndDate] = useState('2023-11-19');
-  const [threshold, setThreshold] = useState(37.5);
-
+  const [endDate, setEndDate] = useState('2024-12-08'); 
+  const [threshold, setThreshold] = useState<number>(37.5);
   const [stats, setStats] = useState<Stats | null>(null);
   const [binomialData, setBinomialData] = useState<BinomialDataPoint[]>([]);
 
   const wsRef = useRef<WebSocket | null>(null);
 
-  // Función para filtrar datos por días
-  const getValuesForDays = useCallback(() => {
-    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-    return historyData
-      .filter((pt) => new Date(pt.timestamp) >= since)
-      .map((pt) => pt.temp_corp);
-  }, [historyData, days]);
-
-  // Filtrar datos por rango de fechas para la gráfica de historial
-  const filterByDateRange = (
-    data: DataPoint[],
-    start: string,
-    end: string
-  ): DataPoint[] => {
-    const startD = new Date(start);
-    const endD = new Date(end);
-    endD.setHours(23, 59, 59, 999);
-    return data.filter((pt) => {
-      const t = new Date(pt.timestamp);
-      return t >= startD && t <= endD;
-    });
-  };
-
-  // Cargar datos iniciales desde el backend (historial)
   const fetchInitialHistory = useCallback(async () => {
+    console.log('fetchInitialHistory: intentando obtener datos del backend', {start:startDate,end:endDate});
     try {
       const res = await fetch(
         `http://localhost:3000/sensor/temperature-history?start=${startDate}&end=${endDate}`,
@@ -157,9 +131,13 @@ const GraficaTemperatura: React.FC = () => {
         }
       );
       const data = await res.json();
-      if (data.success && data.data) {
-        setHistoryData(data.data);
+      console.log('fetchInitialHistory: respuesta del backend', data);
+      if (data.success && Array.isArray(data.data)) {
+        const filtered = data.data.filter((pt: DataPoint) => typeof pt.temp_corp === 'number' && !isNaN(pt.temp_corp));
+        console.log('fetchInitialHistory: datos filtrados con temp_corp numérico', filtered);
+        setHistoryData(filtered);
       } else {
+        console.log('fetchInitialHistory: no se encontraron datos');
         setHistoryData([]);
       }
     } catch (error) {
@@ -168,24 +146,58 @@ const GraficaTemperatura: React.FC = () => {
     }
   }, [startDate, endDate]);
 
-  // Recalcular estadísticas y binomial cada vez que cambian datos, días o umbral
+  const getValuesForDays = useCallback(() => {
+    const validDays = isNaN(days) || days <= 0 ? 1 : days;
+    const since = new Date(Date.now() - validDays * 24 * 60 * 60 * 1000);
+    const vals = historyData
+      .filter((pt) => {
+        const d = new Date(pt.timestamp);
+        if (isNaN(d.getTime())) {
+          console.log('getValuesForDays: timestamp inválido en', pt);
+          return false;
+        }
+        return d >= since;
+      })
+      .map((pt) => pt.temp_corp)
+      .filter((v) => typeof v === 'number' && !isNaN(v));
+    console.log('getValuesForDays: días=', validDays, 'valores=', vals);
+    return vals;
+  }, [historyData, days]);
+
+  const filterByDateRange = (data: DataPoint[], start: string, end: string): DataPoint[] => {
+    const startD = new Date(start);
+    const endD = new Date(end);
+    endD.setHours(23, 59, 59, 999);
+    const filtered = data.filter((pt) => {
+      const t = new Date(pt.timestamp);
+      if(isNaN(t.getTime())){
+        console.log('filterByDateRange: timestamp inválido en', pt);
+        return false;
+      }
+      return t >= startD && t <= endD;
+    });
+    console.log('filterByDateRange:', {start, end, filtered});
+    return filtered;
+  };
+
   useEffect(() => {
     const valuesForDays = getValuesForDays();
     const st = calcStats(valuesForDays);
     setStats(st);
 
-    // Calcular binomial localmente
-    const binomial = calcBinomial(valuesForDays, threshold);
-    setBinomialData(binomial.distribution);
+    console.log('Calculando binomial...');
+    const safeThreshold = isNaN(threshold) ? 37.5 : threshold;
+    const bin = calcBinomial(valuesForDays, safeThreshold);
+    setBinomialData(bin.distribution);
+    console.log('binomialData actual:', bin.distribution);
   }, [historyData, days, threshold, getValuesForDays]);
 
-  // Cargar datos iniciales al montar el componente
   useEffect(() => {
     fetchInitialHistory();
   }, [fetchInitialHistory]);
 
-  // Conectar WebSocket en tiempo real
   useEffect(() => {
+    console.log('Intentando conectar al WebSocket...');
     const ws = connectWebSocket();
     wsRef.current = ws;
     ws.onmessage = (message) => {
@@ -194,47 +206,57 @@ const GraficaTemperatura: React.FC = () => {
         const msg = JSON.parse(message.data);
         if (msg.type === 'temperatura') {
           const tempCorp = parseFloat(msg.data);
-          const newPoint: DataPoint = {
-            timestamp: new Date().toISOString(),
-            temp_corp: tempCorp,
-          };
-          setHistoryData((prev) => [...prev, newPoint]);
-
-          // Recalcular estadísticas y binomial después de recibir nuevo dato
-          const valuesForDays = getValuesForDays();
-          const st = calcStats(valuesForDays);
-          setStats(st);
-
-          const binomial = calcBinomial(valuesForDays, threshold);
-          setBinomialData(binomial.distribution);
+          if (!isNaN(tempCorp)) {
+            const newPoint: DataPoint = {
+              timestamp: new Date().toISOString(),
+              temp_corp: tempCorp,
+            };
+            setHistoryData((prev) => {
+              const updated = [...prev, newPoint];
+              console.log('Nuevos datos tras WebSocket:', updated);
+              return updated;
+            });
+          } else {
+            console.log('WebSocket: dato de temperatura no válido:', msg.data);
+          }
         }
       } catch (err) {
         console.error(err);
       }
+    };
+    ws.onerror = (error) => {
+      console.error("Error en WebSocket:", error);
     };
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
       }
     };
-  }, [getValuesForDays, threshold]);
+  }, []);
 
-  // Datos para gráfica histórica
+  const safeThreshold = isNaN(threshold) ? 37.5 : threshold;
   const historyFiltered = filterByDateRange(historyData, startDate, endDate);
+  const safeDays = isNaN(days) || days <= 0 ? 1 : days;
+
   const historyChartData = {
-    labels: historyFiltered.map((d) => new Date(d.timestamp).toLocaleString()),
+    labels: historyFiltered.map((d) => {
+      const dt = new Date(d.timestamp);
+      if (isNaN(dt.getTime())) {
+        return d.timestamp; 
+      }
+      return dt.toLocaleString();
+    }),
     datasets: [
       {
         label: 'Temperatura (°C)',
         data: historyFiltered.map((d) => d.temp_corp),
         borderColor: 'rgba(75,192,192,1)',
         backgroundColor: 'rgba(75,192,192,0.2)',
-        fill: false,
+        fill: false as const,
       },
     ],
   };
 
-  // Datos para gráfica binomial
   const binomialChartData = {
     labels: binomialData.map((b) => b.k.toString()),
     datasets: [
@@ -253,67 +275,42 @@ const GraficaTemperatura: React.FC = () => {
       className="bg-[#1E3545] p-6 rounded-lg shadow-lg text-white"
       style={{ marginTop: '20px' }}
     >
-      <h2 className="text-white text-lg mb-4">
-        Análisis de Temperatura (Tiempo Real)
-      </h2>
+      <h2 className="text-white text-lg mb-4">Análisis de Temperatura (Tiempo Real)</h2>
 
-      {/* Selección de días para resumen diario */}
       <div className="mb-4">
         <label>Días a resumir: </label>
         <input
           type="number"
-          value={days}
-          onChange={(e) => setDays(parseInt(e.target.value, 10))}
+          value={safeDays}
+          onChange={(e) => {
+            const val = parseInt(e.target.value, 10);
+            if(!isNaN(val) && val>0) setDays(val);
+          }}
           className="text-black p-1"
           min="1"
         />
       </div>
 
-      {/* Mostrar resumen en tabla */}
       {stats ? (
         <table className="table-auto text-sm mb-4 w-full">
           <thead>
             <tr>
-              <th className="px-3 py-2 border-b border-gray-500 text-left">
-                Media
-              </th>
-              <th className="px-3 py-2 border-b border-gray-500 text-left">
-                Mediana
-              </th>
-              <th className="px-3 py-2 border-b border-gray-500 text-left">
-                Moda
-              </th>
-              <th className="px-3 py-2 border-b border-gray-500 text-left">
-                Desv. Estándar
-              </th>
-              <th className="px-3 py-2 border-b border-gray-500 text-left">
-                Mín
-              </th>
-              <th className="px-3 py-2 border-b border-gray-500 text-left">
-                Máx
-              </th>
+              <th className="px-3 py-2 border-b border-gray-500 text-left">Media</th>
+              <th className="px-3 py-2 border-b border-gray-500 text-left">Mediana</th>
+              <th className="px-3 py-2 border-b border-gray-500 text-left">Moda</th>
+              <th className="px-3 py-2 border-b border-gray-500 text-left">Desv. Estándar</th>
+              <th className="px-3 py-2 border-b border-gray-500 text-left">Mín</th>
+              <th className="px-3 py-2 border-b border-gray-500 text-left">Máx</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td className="px-3 py-2 border-b border-gray-500">
-                {stats.mean.toFixed(2)} °C
-              </td>
-              <td className="px-3 py-2 border-b border-gray-500">
-                {stats.median} °C
-              </td>
-              <td className="px-3 py-2 border-b border-gray-500">
-                {stats.mode}
-              </td>
-              <td className="px-3 py-2 border-b border-gray-500">
-                {stats.std.toFixed(2)}
-              </td>
-              <td className="px-3 py-2 border-b border-gray-500">
-                {stats.min} °C
-              </td>
-              <td className="px-3 py-2 border-b border-gray-500">
-                {stats.max} °C
-              </td>
+              <td className="px-3 py-2 border-b border-gray-500">{stats.mean.toFixed(2)} °C</td>
+              <td className="px-3 py-2 border-b border-gray-500">{stats.median} °C</td>
+              <td className="px-3 py-2 border-b border-gray-500">{stats.mode}</td>
+              <td className="px-3 py-2 border-b border-gray-500">{stats.std.toFixed(2)}</td>
+              <td className="px-3 py-2 border-b border-gray-500">{stats.min} °C</td>
+              <td className="px-3 py-2 border-b border-gray-500">{stats.max} °C</td>
             </tr>
           </tbody>
         </table>
@@ -321,7 +318,6 @@ const GraficaTemperatura: React.FC = () => {
         <p>No hay datos para este periodo</p>
       )}
 
-      {/* Historial */}
       <div className="mb-4">
         <h3 className="font-bold mb-2">Historial (selección por fechas)</h3>
         <label>Inicio: </label>
@@ -338,7 +334,6 @@ const GraficaTemperatura: React.FC = () => {
           onChange={(e) => setEndDate(e.target.value)}
           className="text-black p-1"
         />
-        {/* El historial se actualiza automáticamente si cambian fechas o llegan datos nuevos */}
         <div style={{ height: '300px', marginTop: '20px' }}>
           {historyFiltered.length > 0 ? (
             <Line data={historyChartData} />
@@ -348,24 +343,25 @@ const GraficaTemperatura: React.FC = () => {
         </div>
       </div>
 
-      {/* Binomial */}
       <div className="mb-4">
         <h3 className="font-bold mb-2">
-          Modelo Binomial (temperatura &gt; threshold)
+          Modelo Binomial (temperatura &gt; {safeThreshold})
         </h3>
         <label>Umbral (°C): </label>
         <input
           type="number"
           step="0.1"
-          value={threshold}
-          onChange={(e) => setThreshold(parseFloat(e.target.value))}
+          value={isNaN(threshold) ? '' : threshold}
+          onChange={(e) => {
+            const val = parseFloat(e.target.value);
+            if(!isNaN(val)) setThreshold(val);
+          }}
           className="text-black p-1"
           min="0"
         />
-        {/* La gráfica binomial se actualiza cada vez que cambian datos o el threshold */}
         {binomialData.length > 0 ? (
           <div style={{ marginTop: '20px', height: '300px' }}>
-            <Line
+            <Bar
               data={binomialChartData}
               options={{
                 responsive: true,
