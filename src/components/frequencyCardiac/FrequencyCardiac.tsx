@@ -11,7 +11,7 @@ const FrequencyCardiac: React.FC = () => {
       const message = JSON.parse(event.data);
       if (message.type === 'ritmoCardiaco') {
         setFrequency(parseFloat(message.data.lectura).toFixed(0));
-      }
+      } 
     };
 
     ws.addEventListener('message', handleMessage);

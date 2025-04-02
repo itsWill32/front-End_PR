@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ChestMeasurementModalProps {
   isOpen: boolean;
@@ -7,7 +7,20 @@ interface ChestMeasurementModalProps {
 }
 
 const ChestMeasurementModal: React.FC<ChestMeasurementModalProps> = ({ isOpen, onClose, onConfirm }) => {
-  const [chestSize, setChestSize] = React.useState('');
+  const [chestSize, setChestSize] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (/^\d*$/.test(value)) {
+      const numericValue = Number(value);
+      if (numericValue <= 200) {
+        setChestSize(value);
+      }
+    }
+  };
+
+  const isValid = chestSize !== '' && Number(chestSize) > 0 && Number(chestSize) <= 200;
 
   if (!isOpen) return null;
 
@@ -18,7 +31,7 @@ const ChestMeasurementModal: React.FC<ChestMeasurementModalProps> = ({ isOpen, o
         <input
           type="text"
           value={chestSize}
-          onChange={(e) => setChestSize(e.target.value)}
+          onChange={handleChange}
           placeholder="Ingresa la medida de tu pecho (cm)"
           className="w-full p-2 border border-gray-300 rounded-lg mb-4"
         />
@@ -31,7 +44,10 @@ const ChestMeasurementModal: React.FC<ChestMeasurementModalProps> = ({ isOpen, o
           </button>
           <button
             onClick={() => onConfirm(chestSize)}
-            className="bg-[#00D084] text-white py-2 px-4 rounded-lg hover:bg-[#00a065] transition"
+            className={`py-2 px-4 rounded-lg transition ${
+              isValid ? 'bg-[#00D084] text-white hover:bg-[#00a065]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            disabled={!isValid}
           >
             Confirmar
           </button>
