@@ -9,18 +9,30 @@ interface ChestMeasurementModalProps {
 const ChestMeasurementModal: React.FC<ChestMeasurementModalProps> = ({ isOpen, onClose, onConfirm }) => {
   const [chestSize, setChestSize] = useState('');
 
+  // Manejo del cambio en el input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
+    // Permitir solo números
     if (/^\d*$/.test(value)) {
-      const numericValue = Number(value);
-      if (numericValue <= 200) {
-        setChestSize(value);
-      }
+      setChestSize(value);
     }
   };
 
-  const isValid = chestSize !== '' && Number(chestSize) > 0 && Number(chestSize) <= 200;
+  // Validación cuando el usuario sale del input
+  const handleBlur = () => {
+    if (chestSize !== '') {
+      let numericValue = Number(chestSize);
+      
+      // Ajusta el valor si está fuera de rango
+      if (numericValue < 50) numericValue = 50;
+      if (numericValue > 200) numericValue = 200;
+      
+      setChestSize(numericValue.toString());
+    }
+  };
+
+  const isValid = chestSize !== '' && Number(chestSize) >= 50 && Number(chestSize) <= 200;
 
   if (!isOpen) return null;
 
@@ -32,9 +44,11 @@ const ChestMeasurementModal: React.FC<ChestMeasurementModalProps> = ({ isOpen, o
           type="text"
           value={chestSize}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="Ingresa la medida de tu pecho (cm)"
-          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
+          className="w-full p-2 border border-gray-300 rounded-lg mb-2"
         />
+        <p className="text-sm text-gray-500 mb-4">Ingresa un valor entre <b>50 y 200 cm</b>.</p>
         <div className="flex justify-between items-center">
           <button
             onClick={onClose}
