@@ -8,23 +8,23 @@ export default function Login() {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   const navigate = useNavigate();
   const { setUser, isAuthenticated } = useUser();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-
     try {
-      //const response = await fetch('https://athlete-band-api.integrador.xyz/login', {
       const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
-
       const data = await response.json();
 
       if (response.ok) {
@@ -47,7 +47,37 @@ export default function Login() {
     }
   };
 
-  // Redirige a /home si el usuario ya está autenticado
+  const handleResetPassword = async (e: FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:3000/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: resetEmail, password: newPassword }),
+      });
+
+      if (response.ok) {
+        setSuccess('Si el correo es correcto, te llegará la notificación y se llevará a cabo la restauración de la contraseña.');
+        setError(null);
+        
+        // Agregar retraso para mostrar el mensaje de éxito
+        setTimeout(() => {
+          setShowResetModal(false); // Cierra el modal después de un retraso
+        }, 1000); // 1 segundo de retraso
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Error al restablecer la contraseña');
+      }
+    } catch (error) {
+      setError('Error de conexión');
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/home', { replace: true });
@@ -63,7 +93,6 @@ export default function Login() {
           </div>
         </div>
         <h2 className="text-center text-2xl font-bold mb-8">ATHLET-BAND</h2>
-
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-6">
             <div className="relative">
@@ -80,7 +109,6 @@ export default function Login() {
                 className="w-full px-4 py-3 bg-transparent border-b-2 border-gray-500 focus:outline-none placeholder-gray-300 text-base transition-all duration-300 ease-in-out relative z-10"
               />
             </div>
-
             <div className="relative">
               <label htmlFor="password" className="block font-semibold text-base mb-2">
                 CONTRASEÑA
@@ -96,29 +124,30 @@ export default function Login() {
               />
             </div>
           </div>
-
-          {error && (
-            <p className="text-center text-red-400 bg-red-900 bg-opacity-30 p-2 rounded mt-4">
-              {error}
-            </p>
-          )}
-
-          {success && (
-            <p className="text-center text-green-400 bg-green-900 bg-opacity-30 p-2 rounded mt-4">
-              {success}
-            </p>
-          )}
-
+          {error && <p className="text-center text-red-400 bg-red-900 bg-opacity-30 p-2 rounded mt-4">{error}</p>}
+          {success && <p className="text-center text-green-400 bg-green-900 bg-opacity-30 p-2 rounded mt-4">{success}</p>}
           <div className="text-center mt-8">
-            <button
-              type="submit"
-              className="w-full px-6 py-3 border border-white rounded-md hover:bg-white hover:text-black transition duration-200 text-base font-semibold"
-            >
+            <button type="submit" className="w-full px-6 py-3 border border-white rounded-md hover:bg-white hover:text-black transition duration-200 text-base font-semibold">
               INICIAR SESIÓN
             </button>
           </div>
+          <p className="text-center mt-4 text-sm cursor-pointer underline" onClick={() => setShowResetModal(true)}>¿Olvidaste tu contraseña?</p>
         </form>
       </div>
+      {showResetModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-gray-800 p-6 rounded shadow-lg text-white">
+            <h2 className="text-lg font-bold">Restablecer Contraseña</h2>
+            <form onSubmit={handleResetPassword} className="mt-4 space-y-4">
+              <input type="email" placeholder="Correo electrónico" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} className="w-full px-4 py-3 border bg-transparent" required />
+              <input type="password" placeholder="Nueva contraseña" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full px-4 py-3 border bg-transparent" required />
+              <input type="password" placeholder="Repetir contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-3 border bg-transparent" required />
+              <button type="submit" className="w-full bg-white text-black py-3 rounded">Restablecer</button>
+            </form>
+            <button onClick={() => setShowResetModal(false)} className="mt-4 text-red-400">Cerrar</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
