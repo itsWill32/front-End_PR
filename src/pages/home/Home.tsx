@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Home.css';
 import { FaHome, FaChartBar, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -15,7 +15,7 @@ interface Location {
   longitude: number;
 }
 
-export default function Home() {
+const Home: React.FC = () => {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
   const [location, setLocation] = useState<Location>({ latitude: 0, longitude: 0 });
@@ -25,18 +25,19 @@ export default function Home() {
   const [showConfirmEndModal, setShowConfirmEndModal] = useState<boolean>(false);
   const [isEncorvado, setIsEncorvado] = useState<boolean>(false);
 
-  // Configurar la conexión WebSocket
+  // Conexión WebSocket y procesamiento de mensajes
   useEffect(() => {
     const ws = connectWebSocket();
 
     const handleMessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
       console.log("Mensaje recibido desde el backend:", message);
-
-      if (message.type === 'gps' && message.data.latitud && message.data.longitud) {
+      
+      // Se espera que el backend envíe para GPS las propiedades "lat" y "lon"
+      if (message.type === 'gps' && message.data.lat && message.data.lon) {
         setLocation({
-          latitude: parseFloat(message.data.latitud),
-          longitude: parseFloat(message.data.longitud),
+          latitude: parseFloat(message.data.lat),
+          longitude: parseFloat(message.data.lon),
         });
       } else if (message.type === 'postura') {
         if (message.data === 'encorvado') {
@@ -55,7 +56,7 @@ export default function Home() {
     };
   }, []);
 
-  // Temporizador
+  // Temporizador para la actividad
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isRunning) {
@@ -64,11 +65,26 @@ export default function Home() {
       }, 1000);
     }
     return () => {
-      clearInterval(timer);
+      if (timer) clearInterval(timer);
     };
   }, [isRunning]);
 
-  // Manejo del botón Iniciar/Terminar
+  // Cuenta regresiva antes de iniciar la actividad
+  useEffect(() => {
+    if (showCountdown) {
+      const countdownTimer: NodeJS.Timeout = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+
+      if (countdown === 0) {
+        clearInterval(countdownTimer);
+        handleCountdownFinish();
+      }
+
+      return () => clearInterval(countdownTimer);
+    }
+  }, [showCountdown, countdown]);
+
   const handleButtonClick = () => {
     if (isRunning) {
       setShowConfirmEndModal(true);
@@ -93,24 +109,6 @@ export default function Home() {
     setShowConfirmEndModal(false);
   };
 
-  // Cuenta regresiva
-  useEffect(() => {
-    if (showCountdown) {
-      const countdownTimer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-
-      if (countdown === 0) {
-        clearInterval(countdownTimer);
-        handleCountdownFinish();
-      }
-
-      return () => {
-        clearInterval(countdownTimer);
-      };
-    }
-  }, [showCountdown, countdown]);
-
   return (
     <div className="flex flex-col min-h-screen bg-black">
       {/* Encabezado */}
@@ -129,7 +127,7 @@ export default function Home() {
           <Metrics time={time} />
         </div>
 
-        {/* Mostrar alerta si el usuario está encorvado */}
+        {/* Alerta de postura */}
         {isEncorvado && (
           <div className="mx-4 mt-4 p-4 bg-red-600 text-white rounded-md">
             <p>¡Mejora tu postura!</p>
@@ -162,8 +160,7 @@ export default function Home() {
             }`}
           >
             <Link to="/estadistics">
-              <FaChartBar />
-              Estadísticas
+              <FaChartBar /> Estadísticas
             </Link>
           </button>
           <button
@@ -173,8 +170,7 @@ export default function Home() {
             }`}
           >
             <Link to="/home">
-              <FaHome />
-              Actividad
+              <FaHome /> Actividad
             </Link>
           </button>
           <button
@@ -184,8 +180,7 @@ export default function Home() {
             }`}
           >
             <Link to="/profile">
-              <FaUser />
-              Perfil
+              <FaUser /> Perfil
             </Link>
           </button>
         </div>
@@ -204,4 +199,6 @@ export default function Home() {
       )}
     </div>
   );
-}
+};
+
+export default Home;
