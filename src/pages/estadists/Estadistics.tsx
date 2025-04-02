@@ -6,6 +6,9 @@ import GraficaDistancia from '../../components/graficaDistancia/GraficaDistancia
 import GraficaTiempo from '../../components/graficaTiempo/GraficaTiempo';
 import TrendsChart from '../../components/TrendsChart';
 import TrainingClassification from '../../components/TrainingClassification';
+import GraficaRitmoCardiaco from '../../components/GraficaRitmoCardiaco';
+import GraficaTemperatura from '../../components/GraficaTemperatura';
+import TablaTemperatura from '../../components/TablaTemperatura'; // Importa la tabla
 import { Link } from 'react-router-dom';
 import logoAthleteBand from "../../assets/ATHLETEBANDLogo.png";
 
@@ -36,13 +39,16 @@ export default function Estadistics() {
       <main className="flex-grow bg-black mb-16">
         <ProgressStats />
 
-        {/* Gráficas */}
+        {/* Gráficas y Tabla */}
         <div className="p-12 space-y-6">
           <GraficaDistancia />
           <GraficaTiempo />
           <GraficaCalorias />
+          <GraficaRitmoCardiaco />
           <TrendsChart />
           <TrainingClassification />
+          <GraficaTemperatura /> {/* Gráficas de temperatura y estadística */}
+          <TablaTemperatura /> {/* Tabla con todas las lecturas de temperatura */}
         </div>
       </main>
 

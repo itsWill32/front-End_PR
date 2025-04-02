@@ -21,17 +21,17 @@ export default function Metrics({ time }: MetricsProps) {
 
       <div className="grid grid-cols-3 gap-4 text-center">
         <div>
-          <h2 className="text-lg font-bold">00:00:00</h2>
+          <h2 className="text-lg font-bold">35.00</h2>
           <p className="text-gray-400 text-xs">DISTANCIA (KM)</p>
         </div>
 
         <div>
-          <h2 className="text-lg font-bold">00:00:00</h2>
+          <h2 className="text-lg font-bold">1700</h2>
           <p className="text-gray-400 text-xs">CALORÍAS (KCAL)</p>
         </div>
 
         <div>
-          <h2 className="text-lg font-bold">00:00:00</h2>
+          <h2 className="text-lg font-bold">85.6</h2>
           <p className="text-gray-400 text-xs">RITMO MEDIO</p>
         </div>
       </div>
